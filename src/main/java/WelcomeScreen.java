@@ -11,7 +11,7 @@ import javafx.scene.layout.VBox;
 
 public class WelcomeScreen{
 
-    private Scene scene;
+    private Scene welcomeScreen;
 
     public WelcomeScreen(JavaFXTemplate mainApp) {
         MenuBar welcomeMenuBar = new MenuBar();
@@ -30,7 +30,7 @@ public class WelcomeScreen{
         BorderPane welcomeRoot = new BorderPane();
         welcomeRoot.setTop(welcomeMenuBar);
         welcomeRoot.setCenter(welcomeSc);
-        scene = new Scene(welcomeRoot, 800, 600);
+        welcomeScreen = new Scene(welcomeRoot, 1000, 600);
 
         startBtn.setOnAction(e -> mainApp.showGameScene());
         rulesItem1.setOnAction(e -> mainApp.showRules());
@@ -39,6 +39,6 @@ public class WelcomeScreen{
     }
 
     public Scene getScene() {
-        return scene;
+        return welcomeScreen;
     }
 }
