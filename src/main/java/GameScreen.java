@@ -111,7 +111,48 @@ public class GameScreen {
             System.out.println("Quick Pick chose " + selectedSpots + " numbers.");
         });
         
+        
         Button startDraw = new Button("Start Drawing");
+        startDraw.setOnAction(e -> {
+
+            if (chosenButtons.isEmpty()) {
+                System.out.println("Please select your numbers first!");
+                return;
+            }
+
+            List<Integer> allNumbers = new ArrayList<>();
+            for (int i = 1; i <= 80; i++) {
+                allNumbers.add(i);
+            }
+            Collections.shuffle(allNumbers);
+            List<Integer> drawnNumbers = allNumbers.subList(0, 20);
+            System.out.println("Drawn numbers: " + drawnNumbers);
+
+            for (int i = 0; i < numberButtons.size(); i++) {
+                Button b = numberButtons.get(i);
+                int buttonNumber = i + 1;
+                if (drawnNumbers.contains(buttonNumber)) {
+                    b.setStyle("-fx-background-color: red;");
+                }
+            }
+
+            int matches = 0;
+            for (Button b : chosenButtons) {
+                int buttonNumber = Integer.parseInt(b.getText());
+                if (drawnNumbers.contains(buttonNumber)) {
+                    matches++;
+                    b.setStyle("-fx-background-color: purple;");
+                }
+            }
+
+            Alert alert = new Alert(Alert.AlertType.INFORMATION);
+            alert.setTitle("Keno Results");
+            alert.setHeaderText("Drawing Complete!");
+            alert.setContentText("You matched " + matches + " out of 20 numbers!");
+            alert.showAndWait();
+        });
+        
+        
 
         VBox gameLayout = new VBox(20, gameLayout_top, gameLayout_bottom, quickPick, startDraw);
         gameLayout.setAlignment(Pos.CENTER);
@@ -123,7 +164,6 @@ public class GameScreen {
 
         gameScreen = new Scene(gameRoot, 1000, 600);
 
-        // ---- Menu actions ----
         rulesItem2.setOnAction(e -> mainApp.showRules());
         oddsItem2.setOnAction(e -> mainApp.showOdds());
         backItem.setOnAction(e -> mainApp.showWelcomeScene());
