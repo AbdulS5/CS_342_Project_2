@@ -33,10 +33,11 @@ public class JavaFXTemplate extends Application {
 
     Button b1;
     TextField t1;
-    VBox root;
+    VBox vbox;
     HBox bbox;
     EventHandler<ActionEvent> myhandler;
     MenuBar menu;
+    BorderPane root;
 
 	public static void main(String[] args) {
 		// TODO Auto-generated method stub
@@ -82,25 +83,28 @@ public class JavaFXTemplate extends Application {
         Region r1 = new Region();
         r1.setMinWidth(30);
 
+        menu = new MenuBar();
+        Menu mOne = new Menu("Menu");
+
+        bbox = new HBox(b1,r1);
+        vbox = new VBox(menu, bbox, t1);
+        root = new BorderPane();
+        root.setCenter(vbox);
+        //root.setStyle("-fx-padding: 20;");
+
         //b2.setOnAction(new EventHandler<ActionEvent>() {
         //    public void handle(ActionEvent e) {
         //        t1.clear();
         //    }
         //});
 
-        b1.setOnAction(e->t1.setText("I love lambda expressions!!!"));
-
-        menu = new MenuBar();
-        Menu mOne = new Menu("Menu");
+        b1.setOnAction(e->t1.setText("Testing"));
 
         MenuItem item = new MenuItem("click me");
         item.setOnAction(e->t1.setText("item was clicked"));
         mOne.getItems().add(item);
 
         menu.getMenus().addAll(mOne);
-
-        bbox = new HBox(b1,r1);
-        root = new VBox(menu, bbox, t1);
 
         Scene scene = new Scene(root, 700,700);
 			primaryStage.setScene(scene);
