@@ -1,6 +1,10 @@
 import javafx.geometry.Insets;
 import javafx.scene.control.Button;
 import javafx.scene.layout.GridPane;
+import javafx.scene.Node;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class BetCard {
 
@@ -23,5 +27,15 @@ public class BetCard {
             }
         }
         return gridPane;
+    }
+
+	public static List<Button> getButtonsFromGridPane(GridPane gridPane, ArrayList buttons) {
+
+        for (Node node : gridPane.getChildren()) {
+            if (node instanceof Button) {
+                buttons.add((Button) node);
+            }
+        }
+        return buttons;
     }
 }
