@@ -9,9 +9,11 @@ import javafx.scene.control.MenuItem;
 import javafx.scene.control.SeparatorMenuItem;
 import javafx.scene.control.TextArea;
 import javafx.scene.layout.BorderPane;
+import javafx.scene.layout.GridPane;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 import javafx.scene.control.Alert;
+import javafx.geometry.Insets;
 
 public class JavaFXTemplate extends Application {
 
@@ -51,15 +53,17 @@ public class JavaFXTemplate extends Application {
         welcomeRoot.setTop(welcomeMenuBar);
         welcomeRoot.setCenter(welcomeSc);
         welcomeScreen = new Scene(welcomeRoot, 800, 600);
-        
+
         Label gameTitle = new Label("KENO GAME SCREEN");
         VBox gameLayout = new VBox(20, gameTitle);
         gameLayout.setAlignment(Pos.CENTER);
         BorderPane gameRoot = new BorderPane();
         gameRoot.setTop(gameMenuBar);
         gameRoot.setCenter(gameLayout);
+        GridPane table = createButtonTable(10,8);
+        gameRoot.setRight(table);
         gameScreen = new Scene(gameRoot, 800, 600);
-        
+
         startBtn.setOnAction(e -> primaryStage.setScene(gameScreen));
         rulesItem1.setOnAction(e -> showRules());
         oddsItem1.setOnAction(e -> showOdds());
@@ -68,11 +72,32 @@ public class JavaFXTemplate extends Application {
         rulesItem2.setOnAction(e -> showRules());
         oddsItem2.setOnAction(e -> showOdds());
         backItem.setOnAction(e -> primaryStage.setScene(welcomeScreen));
-        
+
         primaryStage.setScene(welcomeScreen);
         primaryStage.show();
-        
 
+
+    }
+
+    public static GridPane createButtonTable(int numRows, int numCols) {
+        GridPane gridPane = new GridPane();
+        gridPane.setPadding(new Insets(10)); // Add some padding around the grid
+        gridPane.setHgap(5); // Horizontal gap between buttons
+        gridPane.setVgap(5); // Vertical gap between buttons
+
+        for (int row = 0; row < numRows; row++) {
+            for (int col = 0; col < numCols; col++) {
+                Button button = new Button("" + (row * numCols + col + 1));
+                // Optional: Add an action handler to each button
+                int finalRow = row;
+                int finalCol = col;
+                button.setOnAction(event -> {
+                    System.out.println("Button at (" + finalRow + ", " + finalCol + ") clicked!");
+                });
+                gridPane.add(button, col, row); // Add button to the grid at specified column and row
+            }
+        }
+        return gridPane;
     }
 
     private void showRules() {
@@ -91,98 +116,98 @@ public class JavaFXTemplate extends Application {
         alert.getDialogPane().setContent(textArea);
         alert.showAndWait();
     }
-    
+
     private void showOdds() {
         Alert alert = new Alert(Alert.AlertType.INFORMATION);
         alert.setTitle("Odds of Winning");
         alert.setHeaderText("Keno Odds Table");
         TextArea textArea = new TextArea(
                 "10 Spot Game\n" +
-                "Match          Prize\n" +
-                "10         $100,000*\n" +
-                "9             $4,250\n" +
-                "8               $450\n" +
-                "7                $40\n" +
-                "6                $15\n" +
-                "5                 $2\n" +
-                "0                 $5\n" +
-                "Overall Odds: 1 in 9.05\n" +
-                "\n" +
-                "\n" +
-                "9 Spot Game\n" +
-                "Match          Prize\n" +
-                "9           $30,000*\n" +
-                "8             $3,000\n" +
-                "7               $150\n" +
-                "6                $25\n" +
-                "5                 $6\n" +
-                "4                 $1\n" +
-                "Overall Odds: 1 in 6.53\n" +
-                "\n" +
-                "\n" +
-                "8 Spot Game\n" +
-                "Match          Prize\n" +
-                "8           $10,000*\n" +
-                "7               $750\n" +
-                "6                $50\n" +
-                "5                $12\n" +
-                "4                 $2\n" +
-                "Overall Odds: 1 in 9.77\n" +
-                "\n" +
-                "\n" +
-                "7 Spot Game\n" +
-                "Match          Prize\n" +
-                "7             $4,500\n" +
-                "6               $100\n" +
-                "5                $17\n" +
-                "4                 $3\n" +
-                "3                 $1\n" +
-                "Overall Odds: 1 in 4.23\n" +
-                "\n" +
-                "\n" +
-                "6 Spot Game\n" +
-                "Match          Prize\n" +
-                "6             $1,100\n" +
-                "5                $50\n" +
-                "4                 $8\n" +
-                "3                 $1\n" +
-                "Overall Odds: 1 in 6.19\n" +
-                "\n" +
-                "\n" +
-                "5 Spot Game\n" +
-                "Match          Prize\n" +
-                "5               $420\n" +
-                "4                $18\n" +
-                "3                 $2\n" +
-                "Overall Odds: 1 in 10.34\n" +
-                "\n" +
-                "\n" +
-                "4 Spot Game\n" +
-                "Match          Prize\n" +
-                "4                $75\n" +
-                "3                 $5\n" +
-                "2                 $1\n" +
-                "Overall Odds: 1 in 3.86\n" +
-                "\n" +
-                "\n" +
-                "3 Spot Game\n" +
-                "Match          Prize\n" +
-                "3                $27\n" +
-                "2                 $2\n" +
-                "Overall Odds: 1 in 6.55\n" +
-                "\n" +
-                "\n" +
-                "2 Spot Game\n" +
-                "Match          Prize\n" +
-                "2                $11\n" +
-                "Overall Odds: 1 in 16.63\n" +
-                "\n" +
-                "\n" +
-                "1 Spot Game\n" +
-                "Match          Prize\n" +
-                "1                 $2\n" +
-                "Overall Odds: 1 in 4.00\n" +
-                "\n");
+                        "Match          Prize\n" +
+                        "10         $100,000*\n" +
+                        "9             $4,250\n" +
+                        "8               $450\n" +
+                        "7                $40\n" +
+                        "6                $15\n" +
+                        "5                 $2\n" +
+                        "0                 $5\n" +
+                        "Overall Odds: 1 in 9.05\n" +
+                        "\n" +
+                        "\n" +
+                        "9 Spot Game\n" +
+                        "Match          Prize\n" +
+                        "9           $30,000*\n" +
+                        "8             $3,000\n" +
+                        "7               $150\n" +
+                        "6                $25\n" +
+                        "5                 $6\n" +
+                        "4                 $1\n" +
+                        "Overall Odds: 1 in 6.53\n" +
+                        "\n" +
+                        "\n" +
+                        "8 Spot Game\n" +
+                        "Match          Prize\n" +
+                        "8           $10,000*\n" +
+                        "7               $750\n" +
+                        "6                $50\n" +
+                        "5                $12\n" +
+                        "4                 $2\n" +
+                        "Overall Odds: 1 in 9.77\n" +
+                        "\n" +
+                        "\n" +
+                        "7 Spot Game\n" +
+                        "Match          Prize\n" +
+                        "7             $4,500\n" +
+                        "6               $100\n" +
+                        "5                $17\n" +
+                        "4                 $3\n" +
+                        "3                 $1\n" +
+                        "Overall Odds: 1 in 4.23\n" +
+                        "\n" +
+                        "\n" +
+                        "6 Spot Game\n" +
+                        "Match          Prize\n" +
+                        "6             $1,100\n" +
+                        "5                $50\n" +
+                        "4                 $8\n" +
+                        "3                 $1\n" +
+                        "Overall Odds: 1 in 6.19\n" +
+                        "\n" +
+                        "\n" +
+                        "5 Spot Game\n" +
+                        "Match          Prize\n" +
+                        "5               $420\n" +
+                        "4                $18\n" +
+                        "3                 $2\n" +
+                        "Overall Odds: 1 in 10.34\n" +
+                        "\n" +
+                        "\n" +
+                        "4 Spot Game\n" +
+                        "Match          Prize\n" +
+                        "4                $75\n" +
+                        "3                 $5\n" +
+                        "2                 $1\n" +
+                        "Overall Odds: 1 in 3.86\n" +
+                        "\n" +
+                        "\n" +
+                        "3 Spot Game\n" +
+                        "Match          Prize\n" +
+                        "3                $27\n" +
+                        "2                 $2\n" +
+                        "Overall Odds: 1 in 6.55\n" +
+                        "\n" +
+                        "\n" +
+                        "2 Spot Game\n" +
+                        "Match          Prize\n" +
+                        "2                $11\n" +
+                        "Overall Odds: 1 in 16.63\n" +
+                        "\n" +
+                        "\n" +
+                        "1 Spot Game\n" +
+                        "Match          Prize\n" +
+                        "1                 $2\n" +
+                        "Overall Odds: 1 in 4.00\n" +
+                        "\n");
         textArea.setEditable(false);
         textArea.setWrapText(true);
         textArea.setPrefRowCount(10);
