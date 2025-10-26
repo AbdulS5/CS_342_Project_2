@@ -31,7 +31,7 @@ import javafx.scene.layout.VBox;
 
 public class JavaFXTemplate extends Application {
 
-    Button b1,b2,b3;
+    Button b1;
     TextField t1;
     VBox root;
     HBox bbox;
@@ -74,50 +74,33 @@ public class JavaFXTemplate extends Application {
 	     //BorderPane root = new BorderPane();
 	     //root.setCenter(rect);
 
-        b1 = new Button("b1");
+        b1 = new Button("Start");
         b1.setMinWidth(100);
-        b2 = new Button("b2");
-        b2.setMinWidth(100);
-        b3 = new Button("b3");
-        b3.setMinWidth(100);
+
         t1 = new TextField();
 
         Region r1 = new Region();
         r1.setMinWidth(30);
 
-        Region r2 = new Region();
-        r2.setMinWidth(30);
+        //b2.setOnAction(new EventHandler<ActionEvent>() {
+        //    public void handle(ActionEvent e) {
+        //        t1.clear();
+        //    }
+        //});
 
-        Region r3 = new Region();
-        r3.setMinHeight(30);
-
-        myhandler = new EventHandler<ActionEvent>() {
-            public void handle(ActionEvent e) {
-                t1.setText("button was pressed");
-            }
-        };
-        b1.setOnAction(myhandler);
-
-        b2.setOnAction(new EventHandler<ActionEvent>() {
-            public void handle(ActionEvent e) {
-                t1.clear();
-            }
-        });
-
-        b3.setOnAction(e->t1.setText("I love lambda expressions!!!"));
+        b1.setOnAction(e->t1.setText("I love lambda expressions!!!"));
 
         menu = new MenuBar();
-        Menu mOne = new Menu("option1");
-        Menu mTwo = new Menu("option2");
+        Menu mOne = new Menu("Menu");
 
         MenuItem item = new MenuItem("click me");
         item.setOnAction(e->t1.setText("item was clicked"));
         mOne.getItems().add(item);
 
-        menu.getMenus().addAll(mOne, mTwo);
+        menu.getMenus().addAll(mOne);
 
-        bbox = new HBox(b1,r1,b2,r2,b3);
-        root = new VBox(menu, bbox,r3, t1);
+        bbox = new HBox(b1,r1);
+        root = new VBox(menu, bbox, t1);
 
         Scene scene = new Scene(root, 700,700);
 			primaryStage.setScene(scene);
