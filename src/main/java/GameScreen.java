@@ -1,10 +1,6 @@
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
-import javafx.scene.control.Label;
-import javafx.scene.control.Menu;
-import javafx.scene.control.MenuBar;
-import javafx.scene.control.MenuItem;
-import javafx.scene.control.SeparatorMenuItem;
+import javafx.scene.control.*;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.VBox;
@@ -38,7 +34,12 @@ public class GameScreen {
         gameLayout_top.setAlignment(Pos.CENTER);
         gameLayout_bottom.setAlignment(Pos.CENTER);
 
-        VBox gameLayout = new VBox(20, gameLayout_top, gameLayout_bottom);
+        Button quickPick = new Button("Quick Pick");
+        quickPick.setOnAction(e -> {System.out.println("Quick Pick clicked!");});
+        Button startDraw = new Button("Start Drawing");
+        startDraw.setOnAction(e -> {System.out.println("Start Draw clicked!");});
+
+        VBox gameLayout = new VBox(20, gameLayout_top, gameLayout_bottom, quickPick, startDraw);
         gameLayout.setAlignment(Pos.CENTER);
         
         BorderPane gameRoot = new BorderPane();
