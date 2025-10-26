@@ -1,14 +1,23 @@
 import javafx.application.Application;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
-import javafx.scene.control.*;
+import javafx.scene.control.Button;
+import javafx.scene.control.Label;
+import javafx.scene.control.Menu;
+import javafx.scene.control.MenuBar;
+import javafx.scene.control.MenuItem;
+import javafx.scene.control.SeparatorMenuItem;
+import javafx.scene.control.TextArea;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
+import javafx.scene.control.Alert;
 
 public class JavaFXTemplate extends Application {
 
     private Stage primaryStage;
+    private Scene gameScreen;
+    private Scene welcomeScreen;
 
     public static void main(String[] args) {
         launch(args);
@@ -18,31 +27,52 @@ public class JavaFXTemplate extends Application {
         primaryStage = stage;
         stage.setTitle("Keno Lottery Game");
 
-        MenuBar menuBar = new MenuBar();
-        Menu menu = new Menu("Menu");
-        MenuItem rulesItem = new MenuItem("Rules of the Game");
-        MenuItem oddsItem = new MenuItem("Odds of Winning");
+        MenuBar welcomeMenuBar = new MenuBar();
+        Menu welcomeMenu = new Menu("Menu");
+        MenuItem rulesItem1 = new MenuItem("Rules of the Game");
+        MenuItem oddsItem1 = new MenuItem("Odds of Winning");
         MenuItem exitItem = new MenuItem("Exit Game");
-        menu.getItems().addAll(rulesItem, oddsItem, new SeparatorMenuItem(), exitItem);
-        menuBar.getMenus().add(menu);
+        welcomeMenu.getItems().addAll(rulesItem1, oddsItem1, new SeparatorMenuItem(), exitItem);
+        welcomeMenuBar.getMenus().add(welcomeMenu);
+
+        MenuBar gameMenuBar = new MenuBar();
+        Menu gameMenu = new Menu("Menu");
+        MenuItem rulesItem2 = new MenuItem("Rules of the Game");
+        MenuItem oddsItem2 = new MenuItem("Odds of Winning");
+        MenuItem backItem = new MenuItem("Back to Menu");
+        gameMenu.getItems().addAll(rulesItem2, oddsItem2, new SeparatorMenuItem(), backItem);
+        gameMenuBar.getMenus().add(gameMenu);
 
         Label title = new Label("Welcome to KENO");
         Button startBtn = new Button("Start Game");
-        VBox centerBox = new VBox(20, title, startBtn);
-        centerBox.setAlignment(Pos.CENTER);
-
-        BorderPane root = new BorderPane();
-        root.setTop(menuBar);
-        root.setCenter(centerBox);
-
-        startBtn.setOnAction(e -> System.out.println("Start Game clicked"));
-        rulesItem.setOnAction(e -> showRules());
-        oddsItem.setOnAction(e -> showOdds());
+        VBox welcomeSc = new VBox(20, title, startBtn);
+        welcomeSc.setAlignment(Pos.CENTER);
+        BorderPane welcomeRoot = new BorderPane();
+        welcomeRoot.setTop(welcomeMenuBar);
+        welcomeRoot.setCenter(welcomeSc);
+        welcomeScreen = new Scene(welcomeRoot, 800, 600);
+        
+        Label gameTitle = new Label("KENO GAME SCREEN");
+        VBox gameLayout = new VBox(20, gameTitle);
+        gameLayout.setAlignment(Pos.CENTER);
+        BorderPane gameRoot = new BorderPane();
+        gameRoot.setTop(gameMenuBar);
+        gameRoot.setCenter(gameLayout);
+        gameScreen = new Scene(gameRoot, 800, 600);
+        
+        startBtn.setOnAction(e -> primaryStage.setScene(gameScreen));
+        rulesItem1.setOnAction(e -> showRules());
+        oddsItem1.setOnAction(e -> showOdds());
         exitItem.setOnAction(e -> primaryStage.close());
 
-        Scene scene = new Scene(root, 800, 600);
-        primaryStage.setScene(scene);
+        rulesItem2.setOnAction(e -> showRules());
+        oddsItem2.setOnAction(e -> showOdds());
+        backItem.setOnAction(e -> primaryStage.setScene(welcomeScreen));
+        
+        primaryStage.setScene(welcomeScreen);
         primaryStage.show();
+        
+
     }
 
     private void showRules() {
@@ -53,15 +83,15 @@ public class JavaFXTemplate extends Application {
                 "   1. Select how many consecutive draws to play. Pick up to 4.\n\n" +
                 "   2. Select how many numbers to match from 1 to 10. In Keno, these are called Spots. The number of Spots you choose and the amount you play per draw will determine the amount you could win. (See the Odds of winning)\n\n" +
                 "   3. Pick as many numbers as you did Spots. You can select numbers from 1 to 80 or choose Quick Pick and let the computer terminal randomly pick some or all of these numbers for you.\n");
-        textArea.setEditable(false); // Prevent user editing
+        textArea.setEditable(false);
         textArea.setWrapText(true);
-        textArea.setPrefRowCount(10); // Set preferred visible rows
-        textArea.setPrefColumnCount(40); // Set preferred visible columns
+        textArea.setPrefRowCount(10);
+        textArea.setPrefColumnCount(40);
 
         alert.getDialogPane().setContent(textArea);
         alert.showAndWait();
     }
-
+    
     private void showOdds() {
         Alert alert = new Alert(Alert.AlertType.INFORMATION);
         alert.setTitle("Odds of Winning");
@@ -153,10 +183,10 @@ public class JavaFXTemplate extends Application {
                 "1                 $2\n" +
                 "Overall Odds: 1 in 4.00\n" +
                 "\n");
-        textArea.setEditable(false); // Prevent user editing
+        textArea.setEditable(false);
         textArea.setWrapText(true);
-        textArea.setPrefRowCount(10); // Set preferred visible rows
-        textArea.setPrefColumnCount(40); // Set preferred visible columns
+        textArea.setPrefRowCount(10);
+        textArea.setPrefColumnCount(40);
 
         alert.getDialogPane().setContent(textArea);
         alert.showAndWait();
