@@ -20,7 +20,6 @@ public class GameScreen {
     private int selectedDraws = 0;
     private int currentDraw = 0;
     private int totalWinnings = 0;
-    private Button pauseBtn;
     private final Random random = new Random();
 
     private List<Button> numberButtons;
@@ -102,8 +101,6 @@ public class GameScreen {
             });
         }
 
-        pauseBtn = new Button("Continue");
-        pauseBtn.setDisable(true);
 
         Button quickPick = new Button("Quick Pick");
         quickPick.setOnAction(e -> {
@@ -144,7 +141,7 @@ public class GameScreen {
         gameLayout_top.setAlignment(Pos.CENTER);
         gameLayout_bottom.setAlignment(Pos.CENTER);
 
-        VBox gameLayout = new VBox(20, gameLayout_top, gameLayout_bottom, quickPick, startDraw, pauseBtn);
+        VBox gameLayout = new VBox(20, gameLayout_top, gameLayout_bottom, quickPick, startDraw);
         gameLayout.setAlignment(Pos.CENTER);
 
         BorderPane gameRoot = new BorderPane();
@@ -161,15 +158,32 @@ public class GameScreen {
     }
 
     private void setRandomBackgroundColor(BorderPane pane) {
-        int r = random.nextInt(256); // 0-255 for red
-        int g = random.nextInt(256); // 0-255 for green
-        int b = random.nextInt(256); // 0-255 for blue
+        int r = random.nextInt(256);
+        int g = random.nextInt(256);
+        int b = random.nextInt(256);
 
         String colorStyle = String.format("-fx-background-color: rgb(%d,%d,%d);", r, g, b);
         pane.setStyle(colorStyle);
     }
 
+    
+    
+    
     private void doNextDraw() {
+        if (currentDraw >= selectedDraws) {
+            PauseTransition pause = new PauseTransition(Duration.seconds(1));
+            pause.setOnFinished(e -> {
+                Alert done = new Alert(Alert.AlertType.INFORMATION);
+                done.setTitle("Game Over");
+                done.setHeaderText("All drawings complete!");
+                done.setContentText("You won a total of $" + totalWinnings + "!");
+                done.showAndWait();
+                resetTheGame();
+            });
+            pause.play();
+            return;
+        }
+
         currentDraw++;
 
         List<Integer> allNumbers = new ArrayList<>();
@@ -177,55 +191,56 @@ public class GameScreen {
         Collections.shuffle(allNumbers);
         List<Integer> drawnNumbers = allNumbers.subList(0, 20);
 
-        for (int i = 0; i < numberButtons.size(); i++) {
-            Button b = numberButtons.get(i);
-            int buttonNumber = i + 1;
-            if (drawnNumbers.contains(buttonNumber)) {
-                b.setStyle("-fx-background-color: red;");
-            }
+        for (Button b : numberButtons) {
+            if (chosenButtons.contains(b)) b.setStyle("-fx-background-color: blue;");
+            else b.setStyle("");
         }
 
-        int matches = 0;
-        for (Button b : chosenButtons) {
-            int buttonNumber = Integer.parseInt(b.getText());
-            if (drawnNumbers.contains(buttonNumber)) {
-                matches++;
-                b.setStyle("-fx-background-color: purple;");
-            }
-        }
-
-        int winnings = calculateWinnings(selectedSpots, matches);
-        totalWinnings += winnings;
-
-        Alert alert = new Alert(Alert.AlertType.INFORMATION);
-        alert.setTitle("Keno Results");
-        alert.setHeaderText("Drawing " + currentDraw + " of " + selectedDraws);
-        alert.setContentText(
-            "You matched " + matches + " numbers!\n" +
-            "You won $" + winnings + " this round.\n" +
-            "Total so far: $" + totalWinnings
-        );
-        alert.showAndWait();
-
-        if (currentDraw < selectedDraws) {
-            pauseBtn.setDisable(false);
-            pauseBtn.setText("Continue to Draw " + (currentDraw + 1));
-            pauseBtn.setOnAction(e -> {
-                pauseBtn.setDisable(true);
-                doNextDraw();
-            });
-        } else {
-            Alert done = new Alert(Alert.AlertType.INFORMATION);
-            done.setTitle("Game Over");
-            done.setHeaderText("All drawings complete!");
-            done.setContentText("You won a total of $" + totalWinnings + "!");
-            done.showAndWait();
-
-            pauseBtn.setDisable(true);
-            resetTheGame();
-           
-        }
+        revealNumbersSequentially(drawnNumbers, 0, drawnNumbers.size());
     }
+
+    private void revealNumbersSequentially(List<Integer> drawnNumbers, int index, int total) {
+        if (index >= total) {
+            int matches = 0;
+            for (Button b : chosenButtons) {
+                int n = Integer.parseInt(b.getText());
+                if (drawnNumbers.contains(n)) matches++;
+            }
+
+            int winnings = calculateWinnings(selectedSpots, matches);
+            totalWinnings += winnings;
+
+            Alert alert = new Alert(Alert.AlertType.INFORMATION);
+            alert.setTitle("Keno Results");
+            alert.setHeaderText("Drawing " + currentDraw + " of " + selectedDraws);
+            alert.setContentText(
+                "You matched " + matches + " numbers!\n" +
+                "You won $" + winnings + " this round.\n" +
+                "Total so far: $" + totalWinnings
+            );
+
+            alert.setOnHidden(e -> {
+                PauseTransition pause = new PauseTransition(Duration.seconds(1));
+                pause.setOnFinished(ev -> doNextDraw());
+                pause.play();
+            });
+
+            alert.show();
+            return;
+        }
+
+        int number = drawnNumbers.get(index);
+        Button btn = numberButtons.get(number - 1);
+        if (chosenButtons.contains(btn))
+            btn.setStyle("-fx-background-color: purple;");
+        else
+            btn.setStyle("-fx-background-color: red;");
+
+        PauseTransition pause = new PauseTransition(Duration.seconds(0.25));
+        pause.setOnFinished(e -> revealNumbersSequentially(drawnNumbers, index + 1, total));
+        pause.play();
+    }
+
     
     private int calculateWinnings(int spots, int matches) {
     	switch (spots) {
