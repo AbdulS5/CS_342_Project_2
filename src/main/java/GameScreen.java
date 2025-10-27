@@ -1,6 +1,9 @@
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import javafx.animation.PauseTransition;
+import javafx.util.Duration;
+
 
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
@@ -16,6 +19,7 @@ public class GameScreen {
     private int selectedDraws = 0;
     private int currentDraw = 0;
     private int totalWinnings = 0;
+    private Button pauseBtn;
 
     private List<Button> numberButtons;
     private List<Button> chosenButtons;
@@ -88,6 +92,9 @@ public class GameScreen {
                 System.out.println("You chose " + selectedDraws + " drawings.");
             });
         }
+        
+        pauseBtn = new Button("Continue");
+        pauseBtn.setDisable(true);
 
         Button quickPick = new Button("Quick Pick");
         quickPick.setOnAction(e -> {
@@ -128,7 +135,7 @@ public class GameScreen {
         gameLayout_top.setAlignment(Pos.CENTER);
         gameLayout_bottom.setAlignment(Pos.CENTER);
 
-        VBox gameLayout = new VBox(20, gameLayout_top, gameLayout_bottom, quickPick, startDraw);
+        VBox gameLayout = new VBox(20, gameLayout_top, gameLayout_bottom, quickPick, startDraw, pauseBtn);
         gameLayout.setAlignment(Pos.CENTER);
 
         BorderPane gameRoot = new BorderPane();
@@ -183,14 +190,19 @@ public class GameScreen {
         alert.showAndWait();
 
         if (currentDraw < selectedDraws) {
-            doNextDraw();
+        	pauseBtn.setDisable(false);
+        	pauseBtn.setText("Continue to Draw" + (currentDraw + 1)); 
+        	pauseBtn.setOnAction(e -> { 
+        		pauseBtn.setDisable(true); 
+        		doNextDraw();
+        	});
         } else {
             Alert done = new Alert(Alert.AlertType.INFORMATION);
             done.setTitle("Game Over");
             done.setHeaderText("All drawings complete!");
             done.setContentText("You won a total of $" + totalWinnings + "!");
             done.showAndWait();
-            
+            pauseBtn.setDisable(true);
             resetTheGame();
            
         }
