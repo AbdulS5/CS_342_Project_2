@@ -1,12 +1,19 @@
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Random;
 
 public class GameLogic {
 
+    private static final Random random = new Random();
+
+    // Calculate winnings based on spots and matches
     public static int calculateWinnings(int spots, int matches) {
         switch (spots) {
             case 10:
                 switch (matches) {
-                    case 10: return 100000;
+                    case 10: return 100_000;
                     case 9: return 4250;
                     case 8: return 450;
                     case 7: return 40;
@@ -17,7 +24,7 @@ public class GameLogic {
                 }
             case 9:
                 switch (matches) {
-                    case 9: return 30000;
+                    case 9: return 30_000;
                     case 8: return 3000;
                     case 7: return 150;
                     case 6: return 25;
@@ -27,7 +34,7 @@ public class GameLogic {
                 }
             case 8:
                 switch (matches) {
-                    case 8: return 10000;
+                    case 8: return 10_000;
                     case 7: return 750;
                     case 6: return 50;
                     case 5: return 12;
@@ -72,22 +79,37 @@ public class GameLogic {
                     default: return 0;
                 }
             case 2:
-                return (matches == 2) ? 11 : 0;
+                return matches == 2 ? 11 : 0;
             case 1:
-                return (matches == 1) ? 2 : 0;
+                return matches == 1 ? 2 : 0;
             default:
                 return 0;
         }
     }
 
-    public static List<Integer> generateDraw() {
+    // Randomly pick `count` unique numbers from 1-80
+    public static List<Integer> quickPick(int count) {
         List<Integer> numbers = new ArrayList<>();
         for (int i = 1; i <= 80; i++) numbers.add(i);
         Collections.shuffle(numbers);
-        return new ArrayList<>(numbers.subList(0, 20));
+        return numbers.subList(0, count);
     }
 
-    public static boolean hasDuplicates(List<Integer> list) {
-        return new HashSet<>(list).size() != list.size();
+    // Random 20 numbers drawn by the system
+    public static List<Integer> systemDraw() {
+        List<Integer> numbers = new ArrayList<>();
+        for (int i = 1; i <= 80; i++) numbers.add(i);
+        Collections.shuffle(numbers);
+        return numbers.subList(0, 20);
+    }
+
+    // Count how many numbers match between user and system
+    public static int countMatches(List<Integer> userNumbers, List<Integer> drawnNumbers) {
+        int count = 0;
+        HashSet<Integer> drawnSet = new HashSet<>(drawnNumbers);
+        for (int n : userNumbers) {
+            if (drawnSet.contains(n)) count++;
+        }
+        return count;
     }
 }
