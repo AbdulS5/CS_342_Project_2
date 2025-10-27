@@ -1,9 +1,10 @@
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Random;
+
 import javafx.animation.PauseTransition;
 import javafx.util.Duration;
-
 
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
@@ -20,6 +21,7 @@ public class GameScreen {
     private int currentDraw = 0;
     private int totalWinnings = 0;
     private Button pauseBtn;
+    private final Random random = new Random();
 
     private List<Button> numberButtons;
     private List<Button> chosenButtons;
@@ -46,7 +48,8 @@ public class GameScreen {
         MenuItem rulesItem2 = new MenuItem("Rules of the Game");
         MenuItem oddsItem2 = new MenuItem("Odds of Winning");
         MenuItem backItem = new MenuItem("Back to Menu");
-        gameMenu.getItems().addAll(rulesItem2, oddsItem2, new SeparatorMenuItem(), backItem);
+        MenuItem newLook = new MenuItem("New Look");
+        gameMenu.getItems().addAll(rulesItem2, oddsItem2, newLook, new SeparatorMenuItem(), backItem);
         gameMenuBar.getMenus().add(gameMenu);
 
 
@@ -59,7 +62,10 @@ public class GameScreen {
         }
         chosenButtons = new ArrayList<>();
 
-        Label spotTitle = new Label("Pick number of spots");
+        TextField spotTitle = new TextField("Pick number of spots");
+        spotTitle.setAlignment(Pos.CENTER);
+        spotTitle.setMaxWidth(180);
+        spotTitle.setEditable(false);
         GridPane chooseSpots = BetCard.createButtonTable(1, 10, 20);
         chooseSpots.setAlignment(Pos.CENTER);
 
@@ -80,7 +86,10 @@ public class GameScreen {
         }
 
 
-        Label drawTitle = new Label("Pick number of drawings");
+        TextField drawTitle = new TextField("Pick number of drawings");
+        drawTitle.setAlignment(Pos.CENTER);
+        drawTitle.setMaxWidth(180);
+        drawTitle.setEditable(false);
         GridPane numDraws = BetCard.createButtonTable(1, 4, 20);
         numDraws.setAlignment(Pos.CENTER);
 
@@ -92,7 +101,7 @@ public class GameScreen {
                 System.out.println("You chose " + selectedDraws + " drawings.");
             });
         }
-        
+
         pauseBtn = new Button("Continue");
         pauseBtn.setDisable(true);
 
@@ -148,8 +157,17 @@ public class GameScreen {
         rulesItem2.setOnAction(e -> mainApp.showRules());
         oddsItem2.setOnAction(e -> mainApp.showOdds());
         backItem.setOnAction(e -> mainApp.showWelcomeScene());
+        newLook.setOnAction(e -> setRandomBackgroundColor(gameRoot));
     }
 
+    private void setRandomBackgroundColor(BorderPane pane) {
+        int r = random.nextInt(256); // 0-255 for red
+        int g = random.nextInt(256); // 0-255 for green
+        int b = random.nextInt(256); // 0-255 for blue
+
+        String colorStyle = String.format("-fx-background-color: rgb(%d,%d,%d);", r, g, b);
+        pane.setStyle(colorStyle);
+    }
 
     private void doNextDraw() {
         currentDraw++;
@@ -190,18 +208,19 @@ public class GameScreen {
         alert.showAndWait();
 
         if (currentDraw < selectedDraws) {
-        	pauseBtn.setDisable(false);
-        	pauseBtn.setText("Continue to Draw" + (currentDraw + 1)); 
-        	pauseBtn.setOnAction(e -> { 
-        		pauseBtn.setDisable(true); 
-        		doNextDraw();
-        	});
+            pauseBtn.setDisable(false);
+            pauseBtn.setText("Continue to Draw " + (currentDraw + 1));
+            pauseBtn.setOnAction(e -> {
+                pauseBtn.setDisable(true);
+                doNextDraw();
+            });
         } else {
             Alert done = new Alert(Alert.AlertType.INFORMATION);
             done.setTitle("Game Over");
             done.setHeaderText("All drawings complete!");
             done.setContentText("You won a total of $" + totalWinnings + "!");
             done.showAndWait();
+
             pauseBtn.setDisable(true);
             resetTheGame();
            
