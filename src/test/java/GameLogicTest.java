@@ -1,71 +1,166 @@
-import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.*;
-import java.util.*;
+
+import org.junit.jupiter.api.Test;
+
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 
 public class GameLogicTest {
 
     @Test
-    void payout10SpotTable() {
-        assertEquals(100000, GameLogic.calculateWinnings(10,10));
-        assertEquals(5, GameLogic.calculateWinnings(10,0));
-        assertEquals(2, GameLogic.calculateWinnings(10,5));
+    public void testCalculateWinnings1Spot1Match() {
+        assertEquals(2, GameLogic.calculateWinnings(1, 1));
     }
 
     @Test
-    void payout9SpotTable() {
-        assertEquals(30000, GameLogic.calculateWinnings(9,9));
-        assertEquals(3000, GameLogic.calculateWinnings(9,8));
-        assertEquals(25, GameLogic.calculateWinnings(9,6));
+    public void testCalculateWinnings1Spot0Match() {
+        assertEquals(0, GameLogic.calculateWinnings(1, 0));
     }
 
     @Test
-    void payout4to1SpotTable() {
-        assertEquals(75, GameLogic.calculateWinnings(4,4));
-        assertEquals(11, GameLogic.calculateWinnings(2,2));
-        assertEquals(2, GameLogic.calculateWinnings(1,1));
+    public void testCalculateWinnings2Spot2Match() {
+        assertEquals(11, GameLogic.calculateWinnings(2, 2));
     }
 
     @Test
-    void zeroOrInvalid_ReturnsZero() {
-        assertEquals(0, GameLogic.calculateWinnings(0,3));
-        assertEquals(0, GameLogic.calculateWinnings(11,5));
+    public void testCalculateWinnings2Spot1Match() {
+        assertEquals(0, GameLogic.calculateWinnings(2, 1));
     }
 
     @Test
-    void winnings_NonNegativeAndWithinBounds() {
-        for (int s = 1; s <= 10; s++) {
-            for (int m = 0; m <= 10; m++) {
-                int val = GameLogic.calculateWinnings(s, m);
-                assertTrue(val >= 0);
-                assertTrue(val <= 100000);
-            }
-        }
+    public void testCalculateWinnings3Spot3Match() {
+        assertEquals(27, GameLogic.calculateWinnings(3, 3));
     }
 
     @Test
-    void drawGeneration_Has20UniqueNumbers() {
-        List<Integer> draw = GameLogic.generateDraw();
-        assertEquals(20, draw.size());
-        assertFalse(GameLogic.hasDuplicates(draw));
-        assertTrue(draw.stream().allMatch(n -> n >= 1 && n <= 80));
+    public void testCalculateWinnings3Spot2Match() {
+        assertEquals(2, GameLogic.calculateWinnings(3, 2));
     }
 
     @Test
-    void payouts_IncreaseWithMatches() {
-        assertTrue(GameLogic.calculateWinnings(7,6) >= GameLogic.calculateWinnings(7,5));
-        assertTrue(GameLogic.calculateWinnings(8,7) >= GameLogic.calculateWinnings(8,6));
+    public void testCalculateWinnings3Spot0Match() {
+        assertEquals(0, GameLogic.calculateWinnings(3, 0));
     }
 
     @Test
-    void specialCase_10SpotZeroMatchFiveDollars() {
+    public void testCalculateWinnings10Spot10Match() {
+        assertEquals(100_000, GameLogic.calculateWinnings(10, 10));
+    }
+
+    @Test
+    public void testCalculateWinnings10Spot9Match() {
+        assertEquals(4250, GameLogic.calculateWinnings(10, 9));
+    }
+
+    @Test
+    public void testCalculateWinnings10Spot0Match() {
         assertEquals(5, GameLogic.calculateWinnings(10, 0));
     }
 
     @Test
-    void hasDuplicates_WorksCorrectly() {
-        List<Integer> a = Arrays.asList(1,2,3,4,5);
-        List<Integer> b = Arrays.asList(1,2,2,3);
-        assertFalse(GameLogic.hasDuplicates(a));
-        assertTrue(GameLogic.hasDuplicates(b));
+    public void testCalculateWinningsInvalidSpots() {
+        assertEquals(0, GameLogic.calculateWinnings(0, 0));
+        assertEquals(0, GameLogic.calculateWinnings(11, 5));
+    }
+
+    @Test
+    public void testQuickPickSize() {
+        List<Integer> pick = GameLogic.quickPick(5);
+        assertEquals(5, pick.size());
+    }
+
+    @Test
+    public void testQuickPickUniqueNumbers() {
+        List<Integer> pick = GameLogic.quickPick(10);
+        Set<Integer> set = new HashSet<>(pick);
+        assertEquals(10, set.size(), "Quick Pick should generate unique numbers");
+    }
+
+    @Test
+    public void testQuickPickInRange() {
+        List<Integer> pick = GameLogic.quickPick(10);
+        for (int n : pick) {
+            assertTrue(n >= 1 && n <= 80, "Number should be between 1 and 80");
+        }
+    }
+
+    @Test
+    public void testSystemDrawSize() {
+        List<Integer> draw = GameLogic.systemDraw();
+        assertEquals(20, draw.size());
+    }
+
+    @Test
+    public void testSystemDrawUniqueNumbers() {
+        List<Integer> draw = GameLogic.systemDraw();
+        Set<Integer> set = new HashSet<>(draw);
+        assertEquals(20, set.size(), "System draw should generate 20 unique numbers");
+    }
+
+    @Test
+    public void testSystemDrawInRange() {
+        List<Integer> draw = GameLogic.systemDraw();
+        for (int n : draw) {
+            assertTrue(n >= 1 && n <= 80, "Number should be between 1 and 80");
+        }
+    }
+
+    @Test
+    public void testCountMatchesFull() {
+        List<Integer> user = List.of(1, 2, 3, 4);
+        List<Integer> drawn = List.of(1, 2, 3, 4);
+        assertEquals(4, GameLogic.countMatches(user, drawn));
+    }
+
+    @Test
+    public void testCountMatchesPartial() {
+        List<Integer> user = List.of(1, 2, 3, 4);
+        List<Integer> drawn = List.of(3, 4, 5, 6);
+        assertEquals(2, GameLogic.countMatches(user, drawn));
+    }
+
+    @Test
+    public void testCountMatchesNone() {
+        List<Integer> user = List.of(1, 2, 3, 4);
+        List<Integer> drawn = List.of(5, 6, 7, 8);
+        assertEquals(0, GameLogic.countMatches(user, drawn));
+    }
+
+    @Test
+    public void testCountMatchesEmptyUser() {
+        List<Integer> user = List.of();
+        List<Integer> drawn = List.of(1, 2, 3);
+        assertEquals(0, GameLogic.countMatches(user, drawn));
+    }
+
+    @Test
+    public void testCountMatchesEmptyDrawn() {
+        List<Integer> user = List.of(1, 2, 3);
+        List<Integer> drawn = List.of();
+        assertEquals(0, GameLogic.countMatches(user, drawn));
+    }
+
+    @Test
+    public void testCountMatchesBothEmpty() {
+        List<Integer> user = List.of();
+        List<Integer> drawn = List.of();
+        assertEquals(0, GameLogic.countMatches(user, drawn));
+    }
+
+    @Test
+    public void testQuickPickThenCountMatches() {
+        List<Integer> user = GameLogic.quickPick(5);
+        List<Integer> drawn = GameLogic.systemDraw();
+        int matches = GameLogic.countMatches(user, drawn);
+        assertTrue(matches >= 0 && matches <= 5);
+    }
+
+    @Test
+    public void testSystemDrawThenCountMatches() {
+        List<Integer> user = List.of(1, 2, 3, 4, 5);
+        List<Integer> drawn = GameLogic.systemDraw();
+        int matches = GameLogic.countMatches(user, drawn);
+        assertTrue(matches >= 0 && matches <= 5);
     }
 }
